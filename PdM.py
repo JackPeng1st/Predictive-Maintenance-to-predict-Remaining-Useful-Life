@@ -156,13 +156,28 @@ models = pd.DataFrame({
 
 models.sort_values(by='RMSE', ascending=True)
 
+# R square: if the value more closer to 1, it means better outcome 
+#print('Variance score: %.2f' % r2_score(y_test.values, prediction_lgb_R))
+r2_score_svr=r2_score(y_test.values, prediction_svr)
+r2_score_xgb=r2_score(y_test.values, prediction_xgb)
+r2_score_rf=r2_score(y_test.values, prediction_rf)
+r2_score_GB_R=r2_score(y_test.values, prediction_GB_R)
+r2_score_ridge_R=r2_score(y_test.values, prediction_ridge_R)
+r2_score_lasso_R=r2_score(y_test.values, prediction_lasso_R)
+r2_score_lgb_R=r2_score(y_test.values, prediction_lgb_R)
+
+model_r2 = pd.DataFrame({
+    'Model': ['Support Vector Regression','XGBoost Regression',
+              'Random Forest Regression','Gradient Boosting Regressor',
+              'Ridge Regression','Lasso Regression','LightGBM Regressor'],
+    'R^2': [r2_score_svr,r2_score_xgb,r2_score_rf,r2_score_GB_R,r2_score_ridge_R,r2_score_lasso_R,r2_score_lgb_R]
+    })
+
+model_r2.sort_values(by='R^2', ascending=False)   
 # data visulization
 plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
 plt.plot(y_test.values[0:200],color = 'r', label="RUL")
 plt.plot(prediction_lgb_R[0:200],color = 'g', label="RUL")
 plt.title("RUL", x=0.5, y=1.03,fontsize=20)  
 plt.show()
-# R square: if the value more closer to 1, it means better outcome 
-print('Variance score: %.2f' % r2_score(y_test.values, prediction_lgb_R))
-print('Variance score: %.2f' % r2_score(y_test.values, prediction_xgb))
-print('Variance score: %.2f' % r2_score(y_test.values,prediction_svr))
+
