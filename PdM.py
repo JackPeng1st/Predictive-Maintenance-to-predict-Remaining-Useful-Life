@@ -218,3 +218,11 @@ rmse_lgb_R=RMSE(RUL_test,prediction_lgb_R)
 print(rmse_lgb_R)
 r2_score_lgb_R=r2_score(RUL_test, prediction_lgb_R)
 print(r2_score_lgb_R)
+
+# data visulization
+plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
+plt.plot(RUL_test,color = 'r', label="Real RUL")
+plt.plot(prediction_lgb_R,color = 'g', label="LightGBM")
+plt.legend(loc = "best", fontsize=20)
+plt.title("RUL", x=0.5, y=1.03,fontsize=20)  
+plt.show()
