@@ -87,13 +87,22 @@ svr.fit(x_train,y_train)
 prediction_svr=svr.predict(x_test)
 
 #XG Boost
-xgb_r = xgb.XGBRegressor(objective ='reg:linear', n_estimators = 10, seed = 123) 
+xgb_r = xgb.XGBRegressor(colsample_bytree=0.4,
+                 gamma=0,                 
+                 learning_rate=0.07,
+                 max_depth=3,
+                 min_child_weight=1.5,
+                 n_estimators=10000,                                                                    
+                 reg_alpha=0.75,
+                 reg_lambda=0.45,
+                 subsample=0.6,
+                 seed=42)
 
 xgb_r.fit(x_train,y_train)
 prediction_xgb=xgb_r.predict(x_test)
 
 #Random Forest Regression
-rf_r=RandomForestRegressor(n_estimators = 100 , oob_score = True, random_state = 42)
+rf_r=RandomForestRegressor(n_estimators = 1000 , oob_score = True, random_state = 42)
 
 rf_r.fit(x_train,y_train)
 prediction_rf=rf_r.predict(x_test)
@@ -176,8 +185,36 @@ model_r2 = pd.DataFrame({
 model_r2.sort_values(by='R^2', ascending=False)   
 # data visulization
 plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
-plt.plot(y_test.values[0:200],color = 'r', label="RUL")
-plt.plot(prediction_lgb_R[0:200],color = 'g', label="RUL")
+plt.plot(y_test.values[0:200],color = 'r', label="Real RUL")
+plt.plot(prediction_lgb_R[0:200],color = 'g', label="LightGBM")
+plt.plot(prediction_svr[0:200],color = 'b', label="Support Vector Regression")
+plt.legend(loc = "best", fontsize=20)
 plt.title("RUL", x=0.5, y=1.03,fontsize=20)  
 plt.show()
 
+###########################################################
+#處理test data
+rul_max = pd.DataFrame(data_test.groupby('id')['time_in_cycles'].max()).reset_index()
+rul_max.columns = ['id', 'max']
+
+PM_truth.columns=['more','id']
+PM_truth['id']=PM_truth.index+1
+PM_truth.head()
+
+PM_truth['total']=PM_truth['more']+rul_max['max']
+
+data_test=data_test.merge(PM_truth,on=['id'],how='left')
+data_test['total']=data_test['total'] - data_test['time_in_cycles']
+
+RUL_test=data_test['total']
+data_test_high_cor=data_test[high_cor_feature]
+####################################################################
+#use original all training data to build model
+#LightGBM Regressor
+model_lgb.fit(data_train_high_cor, RUL_train)
+prediction_lgb_R=model_lgb.predict(data_test_high_cor)
+
+rmse_lgb_R=RMSE(RUL_test,prediction_lgb_R)
+print(rmse_lgb_R)
+r2_score_lgb_R=r2_score(RUL_test, prediction_lgb_R)
+print(r2_score_lgb_R)
