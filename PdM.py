@@ -59,6 +59,30 @@ def prepare_train_data(data, factor = 0):
     return df[df['time_in_cycles'] > factor]
 
 train_data = prepare_train_data(data_train)
+
+#normlaiztion
+RUL_train=train_data['RUL']
+ID_train=train_data['id']
+Cycle_train=train_data['time_in_cycles']
+train_data.drop('RUL',1,inplace=True)
+train_data.drop('id',1,inplace=True)
+train_data.drop('time_in_cycles',1,inplace=True)
+col_name_norm=train_data.columns
+scaler=preprocessing.RobustScaler().fit(train_data)
+train_data=pd.DataFrame(scaler.transform(train_data),columns=col_name_norm)
+train_data['RUL']=RUL_train
+train_data['id']=ID_train
+train_data['time_in_cycles']=Cycle_train
+
+ID_test=data_test['id']
+data_test.drop('id',1,inplace=True)
+Cycle_test=data_test['time_in_cycles']
+data_test.drop('time_in_cycles',1,inplace=True)
+data_test=data_test[col_name_norm]
+data_test=pd.DataFrame(scaler.transform(data_test),columns=col_name_norm)
+data_test['id']=ID_test
+data_test['time_in_cycles']=Cycle_test
+
 #RUL與其他變數的相關變數
 sns.heatmap(train_data.corr(),annot=True,cmap='RdYlGn',linewidths=0.2)
 fig=plt.gcf()
@@ -217,7 +241,7 @@ prediction_lgb_R=model_lgb.predict(data_test_high_cor)
 rmse_lgb_R=RMSE(RUL_test,prediction_lgb_R)
 print(rmse_lgb_R)
 r2_score_lgb_R=r2_score(RUL_test, prediction_lgb_R)
-print(r2_score_lgb_R)
+print('RMSE: ',rmse_lgb_R,'; R^2: ',r2_score_lgb_R)
 
 # data visulization
 plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
