@@ -211,7 +211,7 @@ model_r2.sort_values(by='R^2', ascending=False)
 plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
 plt.plot(y_test.values[0:200],color = 'r', label="Real RUL")
 plt.plot(prediction_lgb_R[0:200],color = 'g', label="LightGBM")
-plt.plot(prediction_svr[0:200],color = 'b', label="Support Vector Regression")
+plt.plot(prediction_lasso_R[0:200],color = 'b', label="Lasso Regression")
 plt.legend(loc = "best", fontsize=20)
 plt.title("RUL", x=0.5, y=1.03,fontsize=20)  
 plt.show()
@@ -242,6 +242,11 @@ rmse_lgb_R=RMSE(RUL_test,prediction_lgb_R)
 print(rmse_lgb_R)
 r2_score_lgb_R=r2_score(RUL_test, prediction_lgb_R)
 print('RMSE: ',rmse_lgb_R,'; R^2: ',r2_score_lgb_R)
+
+def mape(actual, pred): 
+    actual, pred = np.array(actual), np.array(pred)
+    return np.mean(np.abs((actual - pred) / actual)) 
+mape(RUL_test,prediction_lgb_R)
 
 # data visulization
 plt.figure(figsize=(30,10),dpi=100,linewidth = 2)
