@@ -1,3 +1,4 @@
+'''NCTU 彭家祐'''
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -20,9 +21,9 @@ import lightgbm as lgb
 from sklearn.metrics import mean_squared_error, r2_score
 from fancyimpute import BiScaler, KNN, NuclearNormMinimization, SoftImpute,IterativeImputer #用KNN填補空缺值
 
-data_train=pd.read_csv('PM_train.txt',sep=' ',header=None)
-data_test=pd.read_csv('PM_test.txt',sep=' ',header=None)
-PM_truth=pd.read_csv('PM_truth.txt',sep=' ', header=None)
+data_train=pd.read_csv('train_FD001.txt',sep=' ',header=None)
+data_test=pd.read_csv('test_FD001.txt',sep=' ',header=None)
+PM_truth=pd.read_csv('RUL_FD001.txt',sep=' ', header=None)
 #檢查是否有空缺值
 print(data_train.isnull().sum())  
 print(data_test.isnull().sum())  
