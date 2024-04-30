@@ -1,5 +1,3 @@
-NCTU 彭家祐
-
 The goal of this project is to predict the Remaining Useful life of the Turbofan Engine by sensor data, using ML techniques.
 I use the dataset FD001.
 
